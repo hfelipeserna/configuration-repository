@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: catalog-service
+  data:
+    mongodb:
+      authentication-database: root
+      uri: mongodb://db-mongo-catalog:27017/catalog-final-db
+      repositories:
+        enabled: true
+
+server:
+  port: 8071
+
+eureka:
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka
+  instance:
+    preferIpAddress: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      movies:
+        allowHealthIndicatorToFail: false
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      movies:
+        waitDuration: 1000
+        maxAttempts: 3
+        retryExceptions:
+          - feign.FeignException$InternalServerError
