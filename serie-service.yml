@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: serie-service
+  data:
+    mongodb:
+      authentication-database: root
+      uri: mongodb://db-mongo-serie:27017/series-final-db
+      repositories:
+        enabled: true
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+
+queue:
+  serie:
+    name: SerieQueue
+
+server:
+  port: 8072
+
+eureka:
+  client:
+    fetchRegistry: false
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://eureka-service:8761/eureka
+  instance:
+    preferIpAddress: true
