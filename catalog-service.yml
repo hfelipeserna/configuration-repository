@@ -1,12 +1,31 @@
 spring:
+  zipkin:
+    base-url: http://zipkin:9411/
+    enabled: true
   application:
     name: catalog-service
+  rabbitmq:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
   data:
     mongodb:
       authentication-database: root
       uri: mongodb://db-mongo-catalog:27017/catalog-final-db
       repositories:
         enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+
+queue:
+  movie:
+    name: MovieQueue
+  serie:
+    name: SerieQueue
 
 server:
   port: 8071
@@ -32,9 +51,23 @@ resilience4j:
         waitDurationInOpenState: 15000
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
+      series:
+        allowHealthIndicatorToFail: false
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
   retry:
     instances:
       movies:
+        waitDuration: 1000
+        maxAttempts: 3
+        retryExceptions:
+          - feign.FeignException$InternalServerError
+      series:
         waitDuration: 1000
         maxAttempts: 3
         retryExceptions:
